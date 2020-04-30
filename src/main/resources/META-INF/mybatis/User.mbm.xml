@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.raine.springboot.demo.dao.IUserMapper">
+
+    <resultMap id="UserMap" type="com.raine.springboot.demo.domain.User">
+        <result property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="mobile" column="mobile"/>
+        <result property="email" column="email"/>
+        <result property="password" column="password"/>
+        <result property="insertUid" column="insert_uid"/>
+        <result property="insertTime" column="insert_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="isDel" column="is_del"/>
+        <result property="isJob" column="is_job"/>
+        <result property="mcode" column="mcode"/>
+        <result property="sendTime" column="send_time"/>
+        <result property="version" column="version"/>
+    </resultMap>
+    
+    <sql id="columns">
+        <![CDATA[
+        id, username, mobile, email, password, insert_uid, insert_time, update_time, is_del, is_job, mcode, send_time, version
+        ]]>
+    </sql>
+    
+    <sql id="where">
+        <where>
+           <if test="@Ognl@isNotEmpty(id)">
+                AND id = #{id}
+            </if>
+           <if test="@Ognl@isNotEmpty(username)">
+                AND username = #{username}
+            </if>
+           <if test="@Ognl@isNotEmpty(mobile)">
+                AND mobile = #{mobile}
+            </if>
+           <if test="@Ognl@isNotEmpty(email)">
+                AND email = #{email}
+            </if>
+           <if test="@Ognl@isNotEmpty(password)">
+                AND password = #{password}
+            </if>
+           <if test="@Ognl@isNotEmpty(insertUid)">
+                AND insert_uid = #{insertUid}
+            </if>
+           <if test="@Ognl@isNotEmpty(insertTimeBegin)">
+                AND insert_time >= #{insertTimeBegin}
+           </if>
+           <if test="@Ognl@isNotEmpty(insertTimeEnd)">
+                AND insert_time &lt;= #{insertTimeEnd}
+           </if>
+           <if test="@Ognl@isNotEmpty(updateTimeBegin)">
+                AND update_time >= #{updateTimeBegin}
+           </if>
+           <if test="@Ognl@isNotEmpty(updateTimeEnd)">
+                AND update_time &lt;= #{updateTimeEnd}
+           </if>
+           <if test="@Ognl@isNotEmpty(isDel)">
+                AND is_del = #{isDel}
+            </if>
+           <if test="@Ognl@isNotEmpty(isJob)">
+                AND is_job = #{isJob}
+            </if>
+           <if test="@Ognl@isNotEmpty(mcode)">
+                AND mcode = #{mcode}
+            </if>
+           <if test="@Ognl@isNotEmpty(sendTimeBegin)">
+                AND send_time >= #{sendTimeBegin}
+           </if>
+           <if test="@Ognl@isNotEmpty(sendTimeEnd)">
+                AND send_time &lt;= #{sendTimeEnd}
+           </if>
+           <if test="@Ognl@isNotEmpty(version)">
+                AND version = #{version}
+            </if>
+        </where>
+    </sql>
+    
+    <select id="getById" resultMap="UserMap">
+        SELECT <include refid="columns" />
+        <![CDATA[
+            FROM
+                user
+            WHERE 
+                id = #{id} 
+        ]]>
+    </select>
+    
+    <select id="search" resultMap="UserMap">
+        SELECT
+            <include refid="columns" />
+        FROM
+            user 
+        <include refid="where"/>
+        <if test="@Ognl@isNotEmpty(sort)">
+            ORDER BY ${sort}
+        </if>
+        <if test="start gt -1 and end lt 10000">
+            LIMIT #{start}, #{end}
+        </if>
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+
+            INSERT INTO user <trim prefix=" ( " suffix=" ) " suffixOverrides="," >
+                <if test="username != null">
+                username,
+                </if>
+                <if test="mobile != null">
+                mobile,
+                </if>
+                <if test="email != null">
+                email,
+                </if>
+                <if test="password != null">
+                password,
+                </if>
+                <if test="insertUid != null">
+                insert_uid,
+                </if>
+                <if test="insertTime != null">
+                insert_time,
+                </if>
+                <if test="updateTime != null">
+                update_time,
+                </if>
+                <if test="isDel != null">
+                is_del,
+                </if>
+                <if test="isJob != null">
+                is_job,
+                </if>
+                <if test="mcode != null">
+                mcode,
+                </if>
+                <if test="sendTime != null">
+                send_time,
+                </if>
+                <if test="version != null">
+                version
+                </if>
+            </trim> <trim prefix=" values ( " suffix=" ) " suffixOverrides="," >
+            	<if test="username != null">
+                    <![CDATA[#{username}]]>,
+                </if>
+            	<if test="mobile != null">
+                    <![CDATA[#{mobile}]]>,
+                </if>
+            	<if test="email != null">
+                    <![CDATA[#{email}]]>,
+                </if>
+            	<if test="password != null">
+                    <![CDATA[#{password}]]>,
+                </if>
+            	<if test="insertUid != null">
+                    <![CDATA[#{insertUid}]]>,
+                </if>
+            	<if test="insertTime != null">
+                    <![CDATA[#{insertTime}]]>,
+                </if>
+            	<if test="updateTime != null">
+                    <![CDATA[#{updateTime}]]>,
+                </if>
+            	<if test="isDel != null">
+                    <![CDATA[#{isDel}]]>,
+                </if>
+            	<if test="isJob != null">
+                    <![CDATA[#{isJob}]]>,
+                </if>
+            	<if test="mcode != null">
+                    <![CDATA[#{mcode}]]>,
+                </if>
+            	<if test="sendTime != null">
+                    <![CDATA[#{sendTime}]]>,
+                </if>
+            	<if test="version != null">
+                    <![CDATA[#{version}]]>
+                </if>
+            </trim>
+
+    </insert>
+
+    <insert id="saveBatch">
+        <![CDATA[
+            INSERT INTO user (
+                username,
+                mobile,
+                email,
+                password,
+                insert_uid,
+                insert_time,
+                update_time,
+                is_del,
+                is_job,
+                mcode,
+                send_time,
+                version
+            ) VALUES
+        ]]>
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.username},#{item.mobile},#{item.email},#{item.password},#{item.insertUid},#{item.insertTime},#{item.updateTime},#{item.isDel},#{item.isJob},#{item.mcode},#{item.sendTime},#{item.version})
+        </foreach>
+    </insert>
+    
+    <update id="updatePart">
+            UPDATE
+                user
+            <set>
+                <if test="username != null">
+                	<![CDATA[ username = #{username} ]]>,
+                </if>
+                <if test="mobile != null">
+                	<![CDATA[ mobile = #{mobile} ]]>,
+                </if>
+                <if test="email != null">
+                	<![CDATA[ email = #{email} ]]>,
+                </if>
+                <if test="password != null">
+                	<![CDATA[ password = #{password} ]]>,
+                </if>
+                <if test="insertUid != null">
+                	<![CDATA[ insert_uid = #{insertUid} ]]>,
+                </if>
+                <if test="insertTime != null">
+                	<![CDATA[ insert_time = #{insertTime} ]]>,
+                </if>
+                <if test="updateTime != null">
+                	<![CDATA[ update_time = #{updateTime} ]]>,
+                </if>
+                <if test="isDel != null">
+                	<![CDATA[ is_del = #{isDel} ]]>,
+                </if>
+                <if test="isJob != null">
+                	<![CDATA[ is_job = #{isJob} ]]>,
+                </if>
+                <if test="mcode != null">
+                	<![CDATA[ mcode = #{mcode} ]]>,
+                </if>
+                <if test="sendTime != null">
+                	<![CDATA[ send_time = #{sendTime} ]]>,
+                </if>
+                <if test="version != null">
+                	<![CDATA[ version = #{version} ]]>
+                </if>
+            </set>
+            <where>
+                id = #{id}
+            </where>
+    </update>
+    
+    <delete id="deleteByPk">
+        <![CDATA[
+            DELETE
+            FROM
+                user
+            WHERE
+                id = #{id} 
+        ]]>
+    </delete>
+    
+    <delete id="deleteBatchByPks">
+        <![CDATA[
+            DELETE
+            FROM
+                user
+            WHERE
+                id IN
+        ]]>
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">#{item}</foreach>
+    </delete>
+
+    <select id="findUserByMobile" resultMap="UserMap">
+        SELECT <include refid="columns" />
+        <![CDATA[
+            FROM
+                user
+            WHERE
+              mobile=#{mobile} and is_del=0
+        ]]>
+    </select>
+</mapper>
+

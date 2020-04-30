@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.raine.springboot.demo.dao.IRoleMapper">
+
+    <resultMap id="RoleMap" type="com.raine.springboot.demo.domain.Role">
+        <result property="id" column="id"/>
+        <result property="roleName" column="role_name"/>
+        <result property="descpt" column="descpt"/>
+        <result property="code" column="code"/>
+        <result property="insertUid" column="insert_uid"/>
+        <result property="insertTime" column="insert_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    
+    <sql id="columns">
+        <![CDATA[
+        id, role_name, descpt, code, insert_uid, insert_time, update_time
+        ]]>
+    </sql>
+    
+    <sql id="where">
+        <where>
+           <if test="@Ognl@isNotEmpty(id)">
+                AND id = #{id}
+            </if>
+           <if test="@Ognl@isNotEmpty(roleName)">
+                AND role_name = #{roleName}
+            </if>
+           <if test="@Ognl@isNotEmpty(descpt)">
+                AND descpt = #{descpt}
+            </if>
+           <if test="@Ognl@isNotEmpty(code)">
+                AND code = #{code}
+            </if>
+           <if test="@Ognl@isNotEmpty(insertUid)">
+                AND insert_uid = #{insertUid}
+            </if>
+           <if test="@Ognl@isNotEmpty(insertTimeBegin)">
+                AND insert_time >= #{insertTimeBegin}
+           </if>
+           <if test="@Ognl@isNotEmpty(insertTimeEnd)">
+                AND insert_time &lt;= #{insertTimeEnd}
+           </if>
+           <if test="@Ognl@isNotEmpty(updateTimeBegin)">
+                AND update_time >= #{updateTimeBegin}
+           </if>
+           <if test="@Ognl@isNotEmpty(updateTimeEnd)">
+                AND update_time &lt;= #{updateTimeEnd}
+           </if>
+        </where>
+    </sql>
+    
+    <select id="getById" resultMap="RoleMap">
+        SELECT <include refid="columns" />
+        <![CDATA[
+            FROM
+                role
+            WHERE 
+                id = #{id} 
+        ]]>
+    </select>
+    
+    <select id="search" resultMap="RoleMap">
+        SELECT
+            <include refid="columns" />
+        FROM
+            role 
+        <include refid="where"/>
+        <if test="@Ognl@isNotEmpty(sort)">
+            ORDER BY ${sort}
+        </if>
+        <if test="start gt -1 and end lt 10000">
+            LIMIT #{start}, #{end}
+        </if>
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+
+            INSERT INTO role <trim prefix=" ( " suffix=" ) " suffixOverrides="," >
+                <if test="roleName != null">
+                role_name,
+                </if>
+                <if test="descpt != null">
+                descpt,
+                </if>
+                <if test="code != null">
+                code,
+                </if>
+                <if test="insertUid != null">
+                insert_uid,
+                </if>
+                <if test="insertTime != null">
+                insert_time,
+                </if>
+                <if test="updateTime != null">
+                update_time
+                </if>
+            </trim> <trim prefix=" values ( " suffix=" ) " suffixOverrides="," >
+            	<if test="roleName != null">
+                    <![CDATA[#{roleName}]]>,
+                </if>
+            	<if test="descpt != null">
+                    <![CDATA[#{descpt}]]>,
+                </if>
+            	<if test="code != null">
+                    <![CDATA[#{code}]]>,
+                </if>
+            	<if test="insertUid != null">
+                    <![CDATA[#{insertUid}]]>,
+                </if>
+            	<if test="insertTime != null">
+                    <![CDATA[#{insertTime}]]>,
+                </if>
+            	<if test="updateTime != null">
+                    <![CDATA[#{updateTime}]]>
+                </if>
+            </trim>
+
+    </insert>
+
+    <insert id="saveBatch">
+        <![CDATA[
+            INSERT INTO role (
+                role_name,
+                descpt,
+                code,
+                insert_uid,
+                insert_time,
+                update_time
+            ) VALUES
+        ]]>
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.roleName},#{item.descpt},#{item.code},#{item.insertUid},#{item.insertTime},#{item.updateTime})
+        </foreach>
+    </insert>
+    
+    <update id="updatePart">
+            UPDATE
+                role
+            <set>
+                <if test="roleName != null">
+                	<![CDATA[ role_name = #{roleName} ]]>,
+                </if>
+                <if test="descpt != null">
+                	<![CDATA[ descpt = #{descpt} ]]>,
+                </if>
+                <if test="code != null">
+                	<![CDATA[ code = #{code} ]]>,
+                </if>
+                <if test="insertUid != null">
+                	<![CDATA[ insert_uid = #{insertUid} ]]>,
+                </if>
+                <if test="insertTime != null">
+                	<![CDATA[ insert_time = #{insertTime} ]]>,
+                </if>
+                <if test="updateTime != null">
+                	<![CDATA[ update_time = #{updateTime} ]]>
+                </if>
+            </set>
+            <where>
+                id = #{id}
+            </where>
+    </update>
+    
+    <delete id="deleteByPk">
+        <![CDATA[
+            DELETE
+            FROM
+                role
+            WHERE
+                id = #{id} 
+        ]]>
+    </delete>
+    
+    <delete id="deleteBatchByPks">
+        <![CDATA[
+            DELETE
+            FROM
+                role
+            WHERE
+                id IN
+        ]]>
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">#{item}</foreach>
+    </delete>
+
+
+    <resultMap id="rolePerms" type="com.raine.springboot.demo.domain.vo.RoleVo" >
+        <id column="id" property="id" />
+        <result column="role_name" property="roleName"/>
+        <result column="code" property="code"/>
+        <result column="descpt" property="descpt"/>
+        <result column="insert_uid" property="insertUid"/>
+        <result column="insert_time" property="insertTime"/>
+        <collection property="rolePerms" ofType="com.raine.springboot.demo.domain.vo.RolePermissionVo">
+            <result  column="role_id" property="roleId"/>
+            <result column="permit_id" property="permitId"/>
+        </collection>
+    </resultMap>
+
+    <select id="findRoleAndPerms" resultMap="rolePerms">
+        select
+            r.*,rp.role_id,rp.permit_id
+        from role r
+            INNER JOIN role_permission rp ON r.id=rp.role_id
+        WHERE r.id=#{id}
+    </select>
+
+    <select id="getRoleByUserId" resultType="com.raine.springboot.demo.domain.Role">
+        select
+            ur.role_id id,r.role_name,r.code
+        from user_role ur
+            INNER JOIN role r ON r.id=ur.role_id
+        WHERE ur.user_id=#{userId}
+    </select>
+
+</mapper>
+

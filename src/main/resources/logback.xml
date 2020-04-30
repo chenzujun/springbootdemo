@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+
+    <property name="LOG_PATH" value="E:/www/demo"/>    <!-- 日志存储的路径 -->
+    <property name="log.module" value="demo" />
+    <property name="log.max.size" value="100MB" />  <!-- 每个日志文件最大100MB -->
+    <property name="log.max.history" value="7" />   <!-- 最多保存最近7天的日志 -->
+
+    <!-- 控制台输出 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread]%logger{56}.%method:%L -%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- INFO 日志 -->
+    <appender name="FILE.INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${log.module}.info.%d{yyMMdd}.%i.log</fileNamePattern>
+            <maxHistory>${log.max.history}</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${log.max.size}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} %-5level[%thread]%logger{56}.%method:%L -%msg%n</Pattern>
+        </layout>
+    </appender>
+
+    <!-- ERROR 日志 -->
+    <appender name="FILE.ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${log.module}.error.%d{yyMMdd}.%i.log</fileNamePattern>
+            <maxHistory>${log.max.history}</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>${log.max.size}</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%date{yyyy-MM-dd HH:mm:ss.SSS} %-5level[%thread]%logger{56}.%method:%L -%msg%n</Pattern>
+        </layout>
+        <!-- 只记录 WARN 级别以上的日志 -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>WARN</level>
+        </filter>
+    </appender>
+
+    <root>
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE.INFO" />
+        <appender-ref ref="FILE.ERROR" />
+    </root>
+
+    <logger name="com.raine.springboot" additivity="false" level="info">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE.INFO" />
+        <appender-ref ref="FILE.ERROR" />
+    </logger>
+
+</configuration>

@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.raine.springboot.demo.dao.IPermissionMapper">
+
+    <resultMap id="PermissionMap" type="com.raine.springboot.demo.domain.Permission">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="pid" column="pid"/>
+        <result property="zindex" column="zindex"/>
+        <result property="istype" column="istype"/>
+        <result property="descpt" column="descpt"/>
+        <result property="code" column="code"/>
+        <result property="icon" column="icon"/>
+        <result property="page" column="page"/>
+        <result property="insertTime" column="insert_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    
+    <sql id="columns">
+        <![CDATA[
+        id, name, pid, zindex, istype, descpt, code, icon, page, insert_time, update_time
+        ]]>
+    </sql>
+    
+    <sql id="where">
+        <where>
+           <if test="@Ognl@isNotEmpty(id)">
+                AND id = #{id}
+            </if>
+           <if test="@Ognl@isNotEmpty(name)">
+                AND name = #{name}
+            </if>
+           <if test="@Ognl@isNotEmpty(pid)">
+                AND pid = #{pid}
+            </if>
+           <if test="@Ognl@isNotEmpty(zindex)">
+                AND zindex = #{zindex}
+            </if>
+           <if test="@Ognl@isNotEmpty(istype)">
+                AND istype = #{istype}
+            </if>
+           <if test="@Ognl@isNotEmpty(descpt)">
+                AND descpt = #{descpt}
+            </if>
+           <if test="@Ognl@isNotEmpty(code)">
+                AND code = #{code}
+            </if>
+           <if test="@Ognl@isNotEmpty(icon)">
+                AND icon = #{icon}
+            </if>
+           <if test="@Ognl@isNotEmpty(page)">
+                AND page = #{page}
+            </if>
+           <if test="@Ognl@isNotEmpty(insertTimeBegin)">
+                AND insert_time >= #{insertTimeBegin}
+           </if>
+           <if test="@Ognl@isNotEmpty(insertTimeEnd)">
+                AND insert_time &lt;= #{insertTimeEnd}
+           </if>
+           <if test="@Ognl@isNotEmpty(updateTimeBegin)">
+                AND update_time >= #{updateTimeBegin}
+           </if>
+           <if test="@Ognl@isNotEmpty(updateTimeEnd)">
+                AND update_time &lt;= #{updateTimeEnd}
+           </if>
+        </where>
+    </sql>
+    
+    <select id="getById" resultMap="PermissionMap">
+        SELECT <include refid="columns" />
+        <![CDATA[
+            FROM
+                permission
+            WHERE 
+                id = #{id} 
+        ]]>
+    </select>
+    
+    <select id="search" resultMap="PermissionMap">
+        SELECT
+            <include refid="columns" />
+        FROM
+            permission 
+        <include refid="where"/>
+        <if test="@Ognl@isNotEmpty(sort)">
+            ORDER BY ${sort}
+        </if>
+        <if test="start gt -1 and end lt 10000">
+            LIMIT #{start}, #{end}
+        </if>
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+
+            INSERT INTO permission <trim prefix=" ( " suffix=" ) " suffixOverrides="," >
+                <if test="name != null">
+                name,
+                </if>
+                <if test="pid != null">
+                pid,
+                </if>
+                <if test="zindex != null">
+                zindex,
+                </if>
+                <if test="istype != null">
+                istype,
+                </if>
+                <if test="descpt != null">
+                descpt,
+                </if>
+                <if test="code != null">
+                code,
+                </if>
+                <if test="icon != null">
+                icon,
+                </if>
+                <if test="page != null">
+                page,
+                </if>
+                <if test="insertTime != null">
+                insert_time,
+                </if>
+                <if test="updateTime != null">
+                update_time
+                </if>
+            </trim> <trim prefix=" values ( " suffix=" ) " suffixOverrides="," >
+            	<if test="name != null">
+                    <![CDATA[#{name}]]>,
+                </if>
+            	<if test="pid != null">
+                    <![CDATA[#{pid}]]>,
+                </if>
+            	<if test="zindex != null">
+                    <![CDATA[#{zindex}]]>,
+                </if>
+            	<if test="istype != null">
+                    <![CDATA[#{istype}]]>,
+                </if>
+            	<if test="descpt != null">
+                    <![CDATA[#{descpt}]]>,
+                </if>
+            	<if test="code != null">
+                    <![CDATA[#{code}]]>,
+                </if>
+            	<if test="icon != null">
+                    <![CDATA[#{icon}]]>,
+                </if>
+            	<if test="page != null">
+                    <![CDATA[#{page}]]>,
+                </if>
+            	<if test="insertTime != null">
+                    <![CDATA[#{insertTime}]]>,
+                </if>
+            	<if test="updateTime != null">
+                    <![CDATA[#{updateTime}]]>
+                </if>
+            </trim>
+
+    </insert>
+
+    <insert id="saveBatch">
+        <![CDATA[
+            INSERT INTO permission (
+                name,
+                pid,
+                zindex,
+                istype,
+                descpt,
+                code,
+                icon,
+                page,
+                insert_time,
+                update_time
+            ) VALUES
+        ]]>
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.name},#{item.pid},#{item.zindex},#{item.istype},#{item.descpt},#{item.code},#{item.icon},#{item.page},#{item.insertTime},#{item.updateTime})
+        </foreach>
+    </insert>
+    
+    <update id="updatePart">
+            UPDATE
+                permission
+            <set>
+                <if test="name != null">
+                	<![CDATA[ name = #{name} ]]>,
+                </if>
+                <if test="pid != null">
+                	<![CDATA[ pid = #{pid} ]]>,
+                </if>
+                <if test="zindex != null">
+                	<![CDATA[ zindex = #{zindex} ]]>,
+                </if>
+                <if test="istype != null">
+                	<![CDATA[ istype = #{istype} ]]>,
+                </if>
+                <if test="descpt != null">
+                	<![CDATA[ descpt = #{descpt} ]]>,
+                </if>
+                <if test="code != null">
+                	<![CDATA[ code = #{code} ]]>,
+                </if>
+                <if test="icon != null">
+                	<![CDATA[ icon = #{icon} ]]>,
+                </if>
+                <if test="page != null">
+                	<![CDATA[ page = #{page} ]]>,
+                </if>
+                <if test="insertTime != null">
+                	<![CDATA[ insert_time = #{insertTime} ]]>,
+                </if>
+                <if test="updateTime != null">
+                	<![CDATA[ update_time = #{updateTime} ]]>
+                </if>
+            </set>
+            <where>
+                id = #{id}
+            </where>
+    </update>
+    
+    <delete id="deleteByPk">
+        <![CDATA[
+            DELETE
+            FROM
+                permission
+            WHERE
+                id = #{id} 
+        ]]>
+    </delete>
+    
+    <delete id="deleteBatchByPks">
+        <![CDATA[
+            DELETE
+            FROM
+                permission
+            WHERE
+                id IN
+        ]]>
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">#{item}</foreach>
+    </delete>
+
+
+    <select id="findChildPerm" resultMap="PermissionMap">
+        select
+        <include refid="columns" />
+        from permission
+        where pid=#{pid}
+    </select>
+
+    <!--=Start findPerms 查找权限树列表-->
+    <!--<resultMap id="findPermission" type="com.raine.springboot.demo.domain.vo.PermissionVo">-->
+        <!--<id property="id" column="id"/>-->
+        <!--<result property="name" column="name"/>-->
+        <!--<result property="pid" column="pid"/>-->
+        <!--<result property="istype" column="istype"/>-->
+        <!--<result property="code" column="code"/>-->
+        <!--<result property="page" column="page"/>-->
+
+        <!--<collection property="children" column="pid" ofType="com.raine.springboot.demo.domain.Permission">-->
+            <!--<id property="id" column="id"/>-->
+            <!--<result property="name" column="name"/>-->
+            <!--<result property="pid" column="pid"/>-->
+            <!--<result property="istype" column="istype"/>-->
+            <!--<result property="code" column="code"/>-->
+            <!--<result property="page" column="page"/>-->
+        <!--</collection>-->
+    <!--</resultMap>-->
+
+    <sql id="PermColumn" >
+        id, name,pid pId, zindex, istype, code, icon, page
+    </sql>
+
+    <select id="findPerms" resultType="com.raine.springboot.demo.domain.vo.PermissionVo">
+        select
+        <include refid="PermColumn" />
+        from permission
+    </select>
+
+    <select id="findPermsByRole" resultType="com.raine.springboot.demo.domain.Permission">
+        select
+          p.id, p.name, p.pid, p.zindex, p.istype, p.descpt, p.code, p.icon, p.page, p.insert_time, p.update_time
+        from permission p
+        LEFT JOIN role_permission rp ON rp.permit_id=p.id
+        WHERE rp.role_id=#{roleId}
+    </select>
+
+    <select id="getUserPerms" resultType="com.raine.springboot.demo.domain.vo.PermissionVo">
+        select
+            p.id, p.name,p.pid pId, p.zindex, p.istype, p.code, p.icon, p.page
+        from permission p
+            LEFT JOIN role_permission rp ON rp.permit_id=p.id
+            LEFT JOIN role r ON r.id=rp.role_id
+            LEFT JOIN user_role ur ON ur.role_id=r.id
+        WHERE ur.user_id=#{userId}
+        GROUP BY p.id
+        order by p.zindex
+    </select>
+</mapper>
+
